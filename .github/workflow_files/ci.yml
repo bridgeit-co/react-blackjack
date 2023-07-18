@@ -29,6 +29,9 @@ jobs:
         run: npx eslint src --ext .js,.jsx --format json > eslint.json
         if: always()
 
+      - name: Add SHORT_SHA env property with commit short sha
+        run: echo "SHORT_SHA=`echo ${{ github.sha }} | cut -c1-7`" >> $GITHUB_ENV
+      
       - name: Concatenate JSON Payloads
         run: |
           tail -n +4 output.json > test_results.json
@@ -38,7 +41,8 @@ jobs:
           {
             "repo_name": "${{ github.repository }}",
             "language" : "javascript",
-            "url": "${{ github.event.repository.url }}"
+            "url": "${{ github.event.repository.url }}",
+            "commit_sha" : "${{ env.SHORT_SHA }}"
           }
           EOF
           )
